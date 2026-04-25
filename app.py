@@ -217,55 +217,99 @@ elif page == "🎯 Clustering":
         st.metric("🔴 Intensive Leaders", count_intensive, "Developed markets")
     
     st.markdown("---")
-    st.markdown("## 📋 Cluster Profiles")
+    st.markdown("## 📋 Cluster Profiles & Member States")
     
     # Cluster 0
     with st.expander("🔵 Low Infrastructure - Emerging Markets", expanded=False):
         cluster_0 = latest_clusters[latest_clusters["cluster_name"] == "Low Infrastructure"]
+        
+        st.markdown(f"### States in this cluster ({len(cluster_0)})")
+        states_0 = sorted(cluster_0['state'].unique())
+        st.markdown(f"**{', '.join(states_0)}**")
+        
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"**States ({len(cluster_0)}):** {', '.join(cluster_0['state'].unique())}")
             st.metric("Avg Demand", f"{cluster_0['peak_demand(mw)'].mean():,.0f} MW")
             st.metric("Avg Supply", f"{cluster_0['renewable_capacity'].mean():,.0f} MW")
         with col2:
             st.metric("Avg Self-Sufficiency", f"{cluster_0['self_sufficiency_ratio'].mean():.1%}")
             st.metric("Avg Consumption", f"{cluster_0['energy_consumption'].mean():,.0f}")
+        
+        # Show detailed table for this cluster
+        st.markdown("#### Detailed Metrics")
+        cluster_0_display = cluster_0[["state", "peak_demand(mw)", "renewable_capacity", "self_sufficiency_ratio"]].copy()
+        cluster_0_display.columns = ["State", "Peak Demand (MW)", "Renewable Supply (MW)", "Self-Sufficiency"]
+        cluster_0_display["Self-Sufficiency"] = cluster_0_display["Self-Sufficiency"].apply(lambda x: f"{x:.1%}")
+        st.dataframe(cluster_0_display, use_container_width=True, hide_index=True)
     
     # Cluster 1
     with st.expander("🟢 Moderate Growth - Developing Markets", expanded=False):
         cluster_1 = latest_clusters[latest_clusters["cluster_name"] == "Moderate Growth"]
+        
+        st.markdown(f"### States in this cluster ({len(cluster_1)})")
+        states_1 = sorted(cluster_1['state'].unique())
+        st.markdown(f"**{', '.join(states_1)}**")
+        
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"**States ({len(cluster_1)}):** {', '.join(cluster_1['state'].unique())}")
             st.metric("Avg Demand", f"{cluster_1['peak_demand(mw)'].mean():,.0f} MW")
             st.metric("Avg Supply", f"{cluster_1['renewable_capacity'].mean():,.0f} MW")
         with col2:
             st.metric("Avg Self-Sufficiency", f"{cluster_1['self_sufficiency_ratio'].mean():.1%}")
             st.metric("Avg Consumption", f"{cluster_1['energy_consumption'].mean():,.0f}")
+        
+        # Show detailed table for this cluster
+        st.markdown("#### Detailed Metrics")
+        cluster_1_display = cluster_1[["state", "peak_demand(mw)", "renewable_capacity", "self_sufficiency_ratio"]].copy()
+        cluster_1_display.columns = ["State", "Peak Demand (MW)", "Renewable Supply (MW)", "Self-Sufficiency"]
+        cluster_1_display["Self-Sufficiency"] = cluster_1_display["Self-Sufficiency"].apply(lambda x: f"{x:.1%}")
+        st.dataframe(cluster_1_display, use_container_width=True, hide_index=True)
     
     # Cluster 2
     with st.expander("🟠 High Demand Emerging - Growth Markets", expanded=False):
         cluster_2 = latest_clusters[latest_clusters["cluster_name"] == "High Demand Emerging"]
+        
+        st.markdown(f"### States in this cluster ({len(cluster_2)})")
+        states_2 = sorted(cluster_2['state'].unique())
+        st.markdown(f"**{', '.join(states_2)}**")
+        
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"**States ({len(cluster_2)}):** {', '.join(cluster_2['state'].unique())}")
             st.metric("Avg Demand", f"{cluster_2['peak_demand(mw)'].mean():,.0f} MW")
             st.metric("Avg Supply", f"{cluster_2['renewable_capacity'].mean():,.0f} MW")
         with col2:
             st.metric("Avg Self-Sufficiency", f"{cluster_2['self_sufficiency_ratio'].mean():.1%}")
             st.metric("Avg Consumption", f"{cluster_2['energy_consumption'].mean():,.0f}")
+        
+        # Show detailed table for this cluster
+        st.markdown("#### Detailed Metrics")
+        cluster_2_display = cluster_2[["state", "peak_demand(mw)", "renewable_capacity", "self_sufficiency_ratio"]].copy()
+        cluster_2_display.columns = ["State", "Peak Demand (MW)", "Renewable Supply (MW)", "Self-Sufficiency"]
+        cluster_2_display["Self-Sufficiency"] = cluster_2_display["Self-Sufficiency"].apply(lambda x: f"{x:.1%}")
+        st.dataframe(cluster_2_display, use_container_width=True, hide_index=True)
     
     # Cluster 3
     with st.expander("🔴 Energy Intensive Leaders - Developed Markets", expanded=False):
         cluster_3 = latest_clusters[latest_clusters["cluster_name"] == "Energy Intensive Leaders"]
+        
+        st.markdown(f"### States in this cluster ({len(cluster_3)})")
+        states_3 = sorted(cluster_3['state'].unique())
+        st.markdown(f"**{', '.join(states_3)}**")
+        
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"**States ({len(cluster_3)}):** {', '.join(cluster_3['state'].unique())}")
             st.metric("Avg Demand", f"{cluster_3['peak_demand(mw)'].mean():,.0f} MW")
             st.metric("Avg Supply", f"{cluster_3['renewable_capacity'].mean():,.0f} MW")
         with col2:
             st.metric("Avg Self-Sufficiency", f"{cluster_3['self_sufficiency_ratio'].mean():.1%}")
             st.metric("Avg Consumption", f"{cluster_3['energy_consumption'].mean():,.0f}")
+        
+        # Show detailed table for this cluster
+        st.markdown("#### Detailed Metrics")
+        cluster_3_display = cluster_3[["state", "peak_demand(mw)", "renewable_capacity", "self_sufficiency_ratio"]].copy()
+        cluster_3_display.columns = ["State", "Peak Demand (MW)", "Renewable Supply (MW)", "Self-Sufficiency"]
+        cluster_3_display["Self-Sufficiency"] = cluster_3_display["Self-Sufficiency"].apply(lambda x: f"{x:.1%}")
+        st.dataframe(cluster_3_display, use_container_width=True, hide_index=True)
     
     st.markdown("---")
     st.markdown("## 📊 Cluster Analysis Visualizations")
@@ -400,6 +444,87 @@ elif page == "🔮 Forecast":
     fig_forecast.add_trace(go.Scatter(x=national_forecast["year"], y=national_forecast["renewable_capacity"], mode='lines+markers', name='Forecast Supply', line=dict(color="#10B981", width=3)))
     fig_forecast.update_layout(height=500, title="National Energy Forecast", template="plotly_white")
     st.plotly_chart(fig_forecast, use_container_width=True)
+    
+    st.markdown("---")
+    st.markdown("## 🔍 State-Specific Forecast")
+    
+    state_options = sorted(future_df["state"].unique())
+    selected_states = st.multiselect(
+        "Select states to view individual forecasts:",
+        state_options,
+        default=state_options[:3] if len(state_options) >= 3 else state_options,
+        key="forecast_states"
+    )
+    
+    if selected_states:
+        # Forecast for selected states
+        state_forecast = future_df[future_df["state"].isin(selected_states)].groupby(
+            ["year", "state"]
+        ).agg({
+            "peak_demand(mw)": "mean",
+            "renewable_capacity": "mean"
+        }).reset_index()
+        
+        state_forecast["supply_gap"] = (
+            state_forecast["peak_demand(mw)"] - state_forecast["renewable_capacity"]
+        )
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### Demand Forecast")
+            fig_demand = px.line(
+                state_forecast,
+                x="year",
+                y="peak_demand(mw)",
+                color="state",
+                markers=True,
+                title="Peak Demand by State (2025-2030)",
+                labels={"peak_demand(mw)": "Peak Demand (MW)", "year": "Year"}
+            )
+            fig_demand.update_layout(height=400, template="plotly_white")
+            st.plotly_chart(fig_demand, use_container_width=True)
+        
+        with col2:
+            st.markdown("### Supply Forecast")
+            fig_supply = px.line(
+                state_forecast,
+                x="year",
+                y="renewable_capacity",
+                color="state",
+                markers=True,
+                title="Renewable Supply by State (2025-2030)",
+                labels={"renewable_capacity": "Renewable Capacity (MW)", "year": "Year"}
+            )
+            fig_supply.update_layout(height=400, template="plotly_white")
+            st.plotly_chart(fig_supply, use_container_width=True)
+        
+        st.markdown("---")
+        
+        st.markdown("### Supply Gap Forecast")
+        fig_gap = px.line(
+            state_forecast,
+            x="year",
+            y="supply_gap",
+            color="state",
+            markers=True,
+            title="Supply Gap by State (2025-2030) - Positive = Deficit",
+            labels={"supply_gap": "Gap (MW)", "year": "Year"}
+        )
+        fig_gap.update_layout(height=400, template="plotly_white")
+        st.plotly_chart(fig_gap, use_container_width=True)
+        
+        st.markdown("---")
+        
+        st.markdown("### 📊 Forecast Table for Selected States")
+        forecast_table = state_forecast.pivot_table(
+            index="state",
+            columns="year",
+            values="supply_gap",
+            aggfunc="first"
+        ).round(0)
+        forecast_table.columns = [f"Year {int(col)}" for col in forecast_table.columns]
+        st.dataframe(forecast_table, use_container_width=True)
 
 # =====================================================
 # PAGE: SCENARIOS
@@ -412,26 +537,75 @@ elif page == "⚙️ Scenarios":
     st.markdown("## 🎯 Create Custom Scenario")
     scenario_name = st.text_input("Scenario Name", "Custom Scenario")
     
+    # National multipliers
+    st.markdown("### National Multipliers")
     col1, col2, col3 = st.columns(3)
     with col1:
-        solar_mult = st.slider("Solar Multiplier", 0.8, 2.0, 1.0, 0.05, key="scenario_solar")
+        solar_mult = st.slider("☀️ Solar Multiplier", 0.8, 2.0, 1.0, 0.05, key="scenario_solar")
     with col2:
-        wind_mult = st.slider("Wind Multiplier", 0.8, 2.0, 1.0, 0.05, key="scenario_wind")
+        wind_mult = st.slider("💨 Wind Multiplier", 0.8, 2.0, 1.0, 0.05, key="scenario_wind")
     with col3:
-        hydro_mult = st.slider("Hydro Multiplier", 0.8, 2.0, 1.0, 0.05, key="scenario_hydro")
+        hydro_mult = st.slider("💧 Hydro Multiplier", 0.8, 2.0, 1.0, 0.05, key="scenario_hydro")
+    
+    st.markdown("---")
+    
+    # State-specific adjustments
+    st.markdown("### 🔧 State-Specific Adjustments (Optional)")
+    latest = df.sort_values("year").groupby("state").last().reset_index()
+    
+    states_to_adjust = st.multiselect(
+        "Select states to apply custom multipliers:",
+        sorted(latest["state"].unique()),
+        key="states_selector"
+    )
+    
+    state_multipliers = {}
+    if states_to_adjust:
+        st.markdown("#### Configure each state:")
+        for state in states_to_adjust:
+            with st.expander(f"⚡ {state}", expanded=False):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    s_mult = st.slider(f"☀️ Solar", 0.5, 2.0, 1.0, 0.05, key=f"{state}_solar")
+                with col2:
+                    w_mult = st.slider(f"💨 Wind", 0.5, 2.0, 1.0, 0.05, key=f"{state}_wind")
+                with col3:
+                    h_mult = st.slider(f"💧 Hydro", 0.5, 2.0, 1.0, 0.05, key=f"{state}_hydro")
+                
+                state_multipliers[state] = {
+                    "solar": s_mult,
+                    "wind": w_mult,
+                    "hydro": h_mult
+                }
+    
+    st.markdown("---")
     
     if st.button("🚀 Run Scenario Analysis"):
-        latest = df.sort_values("year").groupby("state").last().reset_index()
         scenario_data = latest.copy()
+        
+        # Apply national multipliers
         scenario_data["solar_capacity"] *= solar_mult
         scenario_data["wind_capacity"] *= wind_mult
         scenario_data["hydro_capacity"] *= hydro_mult
+        
+        # Apply state-specific multipliers
+        for state, mults in state_multipliers.items():
+            mask = scenario_data["state"] == state
+            if "solar" in mults:
+                scenario_data.loc[mask, "solar_capacity"] *= mults["solar"]
+            if "wind" in mults:
+                scenario_data.loc[mask, "wind_capacity"] *= mults["wind"]
+            if "hydro" in mults:
+                scenario_data.loc[mask, "hydro_capacity"] *= mults["hydro"]
+        
         scenario_data["renewable_capacity"] = scenario_data["solar_capacity"] + scenario_data["wind_capacity"] + scenario_data["hydro_capacity"]
         scenario_data["supply_gap"] = scenario_data["peak_demand(mw)"] - scenario_data["renewable_capacity"]
         scenario_data["self_sufficiency_ratio"] = scenario_data["renewable_capacity"] / (scenario_data["peak_demand(mw)"] + 1e-6)
         
         st.markdown(f"## 📊 Results for {scenario_name}")
+        st.markdown("---")
         
+        # Summary metrics
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("Avg Supply Gap", f"{scenario_data['supply_gap'].mean():,.0f} MW", "After scenario")
@@ -443,6 +617,39 @@ elif page == "⚙️ Scenarios":
         with col4:
             critical = len(scenario_data[scenario_data["self_sufficiency_ratio"] < 0.2])
             st.metric("Critical States", f"{critical}/{len(scenario_data)}", "< 20% self-sufficiency")
+        
+        st.markdown("---")
+        
+        # State-by-state results
+        st.markdown("### 📊 State-by-State Results")
+        results_display = scenario_data[["state", "peak_demand(mw)", "renewable_capacity", "supply_gap", "self_sufficiency_ratio"]].copy()
+        results_display.columns = ["State", "Peak Demand (MW)", "Renewable Supply (MW)", "Supply Gap (MW)", "Self-Sufficiency"]
+        results_display["Self-Sufficiency"] = results_display["Self-Sufficiency"].apply(lambda x: f"{x:.1%}")
+        results_display = results_display.sort_values("Supply Gap (MW)", ascending=False)
+        
+        st.dataframe(results_display, use_container_width=True, hide_index=True)
+        
+        st.markdown("---")
+        
+        # Comparison chart
+        st.markdown("### 📈 Self-Sufficiency Comparison")
+        comparison_df = pd.DataFrame({
+            "Scenario": ["Current"] * len(latest) + ["After Scenario"] * len(scenario_data),
+            "State": list(latest["state"]) + list(scenario_data["state"]),
+            "Self-Sufficiency": list(latest["self_sufficiency_ratio"]) + list(scenario_data["self_sufficiency_ratio"])
+        })
+        
+        fig_comparison = px.bar(
+            comparison_df,
+            x="State",
+            y="Self-Sufficiency",
+            color="Scenario",
+            barmode="group",
+            title="Self-Sufficiency: Before vs After Scenario",
+            color_discrete_map={"Current": "#94A3B8", "After Scenario": "#10B981"}
+        )
+        fig_comparison.update_layout(height=400, template="plotly_white")
+        st.plotly_chart(fig_comparison, use_container_width=True)
 
 # =====================================================
 # PAGE: RANKINGS
