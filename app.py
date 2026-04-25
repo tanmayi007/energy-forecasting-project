@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Energy Forecasting Dashboard v3.0 - HIGH CONTRAST
-All text is NOW VISIBLE with dark fonts on light backgrounds
+Energy Forecasting Dashboard v3.1 - FIXED
+Using native Streamlit st.metric with proper styling
 """
 
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
@@ -23,19 +21,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# MINIMAL CSS - Focus on contrast
-st.markdown("""
-    <style>
-    body {
-        background-color: #F8FAFC;
-    }
-    
-    [data-testid="stSidebar"] {
-        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # =====================================================
 # LOAD & CLUSTER DATA
@@ -116,73 +101,6 @@ ML-powered energy forecasting for India with:
 """)
 
 # =====================================================
-# CUSTOM METRIC CARD FUNCTION
-# =====================================================
-def metric_card(title, value, subtitle, color_code):
-    """Create a high-contrast metric card"""
-    st.markdown(f"""
-    <div style="
-        background-color: #FFFFFF;
-        padding: 20px;
-        border-radius: 12px;
-        border-left: 5px solid {color_code};
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin-bottom: 10px;
-    ">
-        <p style="
-            color: #334155;
-            font-size: 12px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        ">{title}</p>
-        
-        <p style="
-            color: #000000;
-            font-size: 28px;
-            font-weight: 700;
-            margin: 8px 0;
-        ">{value}</p>
-        
-        <p style="
-            color: #64748B;
-            font-size: 12px;
-            margin: 0;
-        ">{subtitle}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-def detail_card(title, items_dict, color_code):
-    """Create a detail card with multiple items"""
-    items_html = ""
-    for label, value in items_dict.items():
-        items_html += f"""
-        <div style="margin-bottom: 12px;">
-            <p style="color: #475569; font-size: 11px; font-weight: 600; margin: 0; text-transform: uppercase;">{label}</p>
-            <p style="color: #000000; font-size: 18px; font-weight: 700; margin: 4px 0;">{value}</p>
-        </div>
-        """
-    
-    st.markdown(f"""
-    <div style="
-        background-color: #FFFFFF;
-        padding: 20px;
-        border-radius: 12px;
-        border-left: 5px solid {color_code};
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    ">
-        <p style="
-            color: #000000;
-            font-size: 16px;
-            font-weight: 700;
-            margin: 0 0 15px 0;
-        ">{title}</p>
-        {items_html}
-    </div>
-    """, unsafe_allow_html=True)
-
-# =====================================================
 # PAGE: DASHBOARD
 # =====================================================
 if page == "🏠 Dashboard":
@@ -192,7 +110,7 @@ if page == "🏠 Dashboard":
     
     latest = df.sort_values("year").groupby("state").last().reset_index()
     
-    # KPI Cards
+    # KPI Cards using native st.metric
     col1, col2, col3, col4 = st.columns(4)
     
     avg_demand = latest["peak_demand(mw)"].mean()
@@ -201,35 +119,31 @@ if page == "🏠 Dashboard":
     avg_sufficiency = latest["self_sufficiency_ratio"].mean()
     
     with col1:
-        metric_card(
-            "📊 Peak Demand Avg",
-            f"{avg_demand:,.0f} MW",
-            f"Across {len(latest)} states",
-            "#3B82F6"
+        st.metric(
+            "📊 Peak Demand",
+            f"{avg_demand:,.0f}",
+            f"MW across {len(latest)} states"
         )
     
     with col2:
-        metric_card(
-            "♻️ Renewable Supply Avg",
-            f"{avg_supply:,.0f} MW",
-            "Current capacity",
-            "#10B981"
+        st.metric(
+            "♻️ Renewable Supply",
+            f"{avg_supply:,.0f}",
+            "MW current capacity"
         )
     
     with col3:
-        metric_card(
-            "⚡ Supply Gap Avg",
-            f"{avg_gap:,.0f} MW",
-            "Deficit" if avg_gap > 0 else "Surplus",
-            "#EF4444"
+        st.metric(
+            "⚡ Supply Gap",
+            f"{avg_gap:,.0f}",
+            "MW Deficit" if avg_gap > 0 else "MW Surplus"
         )
     
     with col4:
-        metric_card(
-            "🎯 Self-Sufficiency Avg",
+        st.metric(
+            "🎯 Self-Sufficiency",
             f"{avg_sufficiency:.1%}",
-            "Renewable ratio",
-            "#F97316"
+            "Renewable ratio"
         )
     
     st.markdown("---")
@@ -263,34 +177,17 @@ if page == "🏠 Dashboard":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        detail_card(
-            f"🏛️ {selected_state}",
-            {
-                "Peak Demand": f"{state_data['peak_demand(mw)']:,.0f} MW",
-                "Solar Capacity": f"{state_data['solar_capacity']:,.0f} MW"
-            },
-            "#3B82F6"
-        )
+        st.markdown(f"#### 🏛️ {selected_state}")
+        st.metric("Peak Demand", f"{state_data['peak_demand(mw)']:,.0f} MW")
+        st.metric("Solar Capacity", f"{state_data['solar_capacity']:,.0f} MW")
     
     with col2:
-        detail_card(
-            "Capacity Mix",
-            {
-                "Wind Capacity": f"{state_data['wind_capacity']:,.0f} MW",
-                "Hydro Capacity": f"{state_data['hydro_capacity']:,.0f} MW"
-            },
-            "#10B981"
-        )
+        st.metric("Wind Capacity", f"{state_data['wind_capacity']:,.0f} MW")
+        st.metric("Hydro Capacity", f"{state_data['hydro_capacity']:,.0f} MW")
     
     with col3:
-        detail_card(
-            "Status",
-            {
-                "Self-Sufficiency": f"{state_data['self_sufficiency_ratio']:.1%}",
-                "Cluster": state_data.get('cluster_name', 'N/A')
-            },
-            "#F97316"
-        )
+        st.metric("Self-Sufficiency", f"{state_data['self_sufficiency_ratio']:.1%}")
+        st.markdown(f"**Cluster:** {state_data.get('cluster_name', 'N/A')}")
 
 # =====================================================
 # PAGE: CLUSTERING
@@ -311,13 +208,13 @@ elif page == "🎯 Clustering":
     count_intensive = len(latest_clusters[latest_clusters["cluster_name"] == "Energy Intensive Leaders"])
     
     with col1:
-        metric_card("🔵 Low Infrastructure", count_low, "Emerging markets", "#3B82F6")
+        st.metric("🔵 Low Infrastructure", count_low, "Emerging markets")
     with col2:
-        metric_card("🟢 Moderate Growth", count_mod, "Developing markets", "#10B981")
+        st.metric("🟢 Moderate Growth", count_mod, "Developing markets")
     with col3:
-        metric_card("🟠 High Demand", count_high, "Growth markets", "#F97316")
+        st.metric("🟠 High Demand", count_high, "Growth markets")
     with col4:
-        metric_card("🔴 Intensive Leaders", count_intensive, "Developed markets", "#EF4444")
+        st.metric("🔴 Intensive Leaders", count_intensive, "Developed markets")
     
     st.markdown("---")
     st.markdown("## 📋 Cluster Profiles")
@@ -328,15 +225,11 @@ elif page == "🎯 Clustering":
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"**States ({len(cluster_0)}):** {', '.join(cluster_0['state'].unique())}")
-            detail_card("", {
-                "Avg Demand": f"{cluster_0['peak_demand(mw)'].mean():,.0f} MW",
-                "Avg Supply": f"{cluster_0['renewable_capacity'].mean():,.0f} MW"
-            }, "#3B82F6")
+            st.metric("Avg Demand", f"{cluster_0['peak_demand(mw)'].mean():,.0f} MW")
+            st.metric("Avg Supply", f"{cluster_0['renewable_capacity'].mean():,.0f} MW")
         with col2:
-            detail_card("", {
-                "Avg Self-Sufficiency": f"{cluster_0['self_sufficiency_ratio'].mean():.1%}",
-                "Avg Consumption": f"{cluster_0['energy_consumption'].mean():,.0f}"
-            }, "#3B82F6")
+            st.metric("Avg Self-Sufficiency", f"{cluster_0['self_sufficiency_ratio'].mean():.1%}")
+            st.metric("Avg Consumption", f"{cluster_0['energy_consumption'].mean():,.0f}")
     
     # Cluster 1
     with st.expander("🟢 Moderate Growth - Developing Markets", expanded=False):
@@ -344,15 +237,11 @@ elif page == "🎯 Clustering":
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"**States ({len(cluster_1)}):** {', '.join(cluster_1['state'].unique())}")
-            detail_card("", {
-                "Avg Demand": f"{cluster_1['peak_demand(mw)'].mean():,.0f} MW",
-                "Avg Supply": f"{cluster_1['renewable_capacity'].mean():,.0f} MW"
-            }, "#10B981")
+            st.metric("Avg Demand", f"{cluster_1['peak_demand(mw)'].mean():,.0f} MW")
+            st.metric("Avg Supply", f"{cluster_1['renewable_capacity'].mean():,.0f} MW")
         with col2:
-            detail_card("", {
-                "Avg Self-Sufficiency": f"{cluster_1['self_sufficiency_ratio'].mean():.1%}",
-                "Avg Consumption": f"{cluster_1['energy_consumption'].mean():,.0f}"
-            }, "#10B981")
+            st.metric("Avg Self-Sufficiency", f"{cluster_1['self_sufficiency_ratio'].mean():.1%}")
+            st.metric("Avg Consumption", f"{cluster_1['energy_consumption'].mean():,.0f}")
     
     # Cluster 2
     with st.expander("🟠 High Demand Emerging - Growth Markets", expanded=False):
@@ -360,15 +249,11 @@ elif page == "🎯 Clustering":
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"**States ({len(cluster_2)}):** {', '.join(cluster_2['state'].unique())}")
-            detail_card("", {
-                "Avg Demand": f"{cluster_2['peak_demand(mw)'].mean():,.0f} MW",
-                "Avg Supply": f"{cluster_2['renewable_capacity'].mean():,.0f} MW"
-            }, "#F97316")
+            st.metric("Avg Demand", f"{cluster_2['peak_demand(mw)'].mean():,.0f} MW")
+            st.metric("Avg Supply", f"{cluster_2['renewable_capacity'].mean():,.0f} MW")
         with col2:
-            detail_card("", {
-                "Avg Self-Sufficiency": f"{cluster_2['self_sufficiency_ratio'].mean():.1%}",
-                "Avg Consumption": f"{cluster_2['energy_consumption'].mean():,.0f}"
-            }, "#F97316")
+            st.metric("Avg Self-Sufficiency", f"{cluster_2['self_sufficiency_ratio'].mean():.1%}")
+            st.metric("Avg Consumption", f"{cluster_2['energy_consumption'].mean():,.0f}")
     
     # Cluster 3
     with st.expander("🔴 Energy Intensive Leaders - Developed Markets", expanded=False):
@@ -376,15 +261,11 @@ elif page == "🎯 Clustering":
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"**States ({len(cluster_3)}):** {', '.join(cluster_3['state'].unique())}")
-            detail_card("", {
-                "Avg Demand": f"{cluster_3['peak_demand(mw)'].mean():,.0f} MW",
-                "Avg Supply": f"{cluster_3['renewable_capacity'].mean():,.0f} MW"
-            }, "#EF4444")
+            st.metric("Avg Demand", f"{cluster_3['peak_demand(mw)'].mean():,.0f} MW")
+            st.metric("Avg Supply", f"{cluster_3['renewable_capacity'].mean():,.0f} MW")
         with col2:
-            detail_card("", {
-                "Avg Self-Sufficiency": f"{cluster_3['self_sufficiency_ratio'].mean():.1%}",
-                "Avg Consumption": f"{cluster_3['energy_consumption'].mean():,.0f}"
-            }, "#EF4444")
+            st.metric("Avg Self-Sufficiency", f"{cluster_3['self_sufficiency_ratio'].mean():.1%}")
+            st.metric("Avg Consumption", f"{cluster_3['energy_consumption'].mean():,.0f}")
     
     st.markdown("---")
     st.markdown("## 📊 Cluster Analysis Visualizations")
@@ -553,15 +434,15 @@ elif page == "⚙️ Scenarios":
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            metric_card("Avg Supply Gap", f"{scenario_data['supply_gap'].mean():,.0f} MW", "After scenario", "#EF4444")
+            st.metric("Avg Supply Gap", f"{scenario_data['supply_gap'].mean():,.0f} MW", "After scenario")
         with col2:
-            metric_card("Avg Self-Sufficiency", f"{scenario_data['self_sufficiency_ratio'].mean():.1%}", "After scenario", "#10B981")
+            st.metric("Avg Self-Sufficiency", f"{scenario_data['self_sufficiency_ratio'].mean():.1%}", "After scenario")
         with col3:
             surplus = len(scenario_data[scenario_data["supply_gap"] < 0])
-            metric_card("Surplus States", f"{surplus}/{len(scenario_data)}", "With positive surplus", "#10B981")
+            st.metric("Surplus States", f"{surplus}/{len(scenario_data)}", "With positive surplus")
         with col4:
             critical = len(scenario_data[scenario_data["self_sufficiency_ratio"] < 0.2])
-            metric_card("Critical States", f"{critical}/{len(scenario_data)}", "< 20% self-sufficiency", "#EF4444")
+            st.metric("Critical States", f"{critical}/{len(scenario_data)}", "< 20% self-sufficiency")
 
 # =====================================================
 # PAGE: RANKINGS
@@ -618,7 +499,7 @@ elif page == "📈 Rankings":
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #64748B; margin-top: 2rem;">
-    <p>⚡ Energy Forecasting Dashboard v3.0 | ML-Powered Analytics</p>
+    <p>⚡ Energy Forecasting Dashboard v3.1 | ML-Powered Analytics</p>
     <p style="font-size: 0.85rem;">With Clustering, Forecasting & Scenario Analysis</p>
 </div>
 """, unsafe_allow_html=True)
